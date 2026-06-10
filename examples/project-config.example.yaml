@@ -1,0 +1,59 @@
+# Example only. Replace every path, project code, phase, model, and policy value.
+
+project_code: EXAMPLE-STUDY-001
+study_title: Example clinical trial eligibility review
+report_language: zh-CN
+
+protocol:
+  path: /path/to/protocol.docx
+  selected_phase: phase_III
+  require_user_confirmation: true
+
+inputs:
+  edc_listing_path: /path/to/edc_listing.xlsx
+  raw_subject_root: /path/to/raw_subject_documents
+  manual_tracker_path: /path/to/manual_ie_tracker.xlsx
+
+subjects:
+  subject_id_pattern: "\\d{5,}"
+  allow_edc_only_subject_review: false
+
+models:
+  review_route: agent
+  review_model: agent-current-model
+  ocr_vl_route: local
+  ocr_vl_model: local-ocr-vl-model-name
+  ocr_workers: 4
+
+privacy:
+  mode: local_or_agent_review_only
+  remote_model_allowed: false
+  notes: Remote model use requires explicit project approval.
+
+outputs:
+  workspace: /path/to/generated_workspace
+  html_report: reports/eligibility_review_report.html
+  excel_ledger: reports/eligibility_review_ledger.xlsx
+  audit_ledger: audit_ledger.jsonl
+
+report:
+  show_one_subject_at_a_time: true
+  center_filter: dropdown
+  subject_filter: dropdown
+  status_filter: multi_select
+  include_full_protocol_text_in_rule_cards: true
+  highlight_key_evidence_phrase: true
+  hide_operational_logs_from_html: true
+
+source_policy:
+  primary_sources:
+    - screening_or_baseline_medical_record
+    - signed_source_record
+    - laboratory_report
+    - examination_report
+    - imaging_report
+    - pulmonary_function_report
+  secondary_sources:
+    - edc_listing
+    - email_or_communication_record
+  secondary_only_pass_requires_verification: true
