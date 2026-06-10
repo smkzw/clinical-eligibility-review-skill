@@ -106,6 +106,14 @@ An aggregate EDC eligibility judgment, such as an IE/IEYN field saying that all 
 
 Except for explicitly configured "not triggered by absence" exclusion rules, a rule should not appear as a normal pass when no displayable, locatable, current-rule-relevant evidence exists. For example, an investigator-suitability exclusion can default to not triggered when no wording says the subject is unsuitable or should not be enrolled. It should not display randomization, score, laboratory, or aggregate EDC eligibility text as evidence for that rule.
 
+## Protocol Numbering Discipline
+
+Always preserve the protocol's official criterion numbering and nesting. Some Word/PDF extraction tools lose numeric-list hierarchy and turn sub-bullets into apparent new criteria. Before finalizing the rule set, compare the extracted rules with the protocol page text or rendered PDF.
+
+If an official exclusion criterion is a medication/treatment-history package with multiple subitems, keep those subitems nested under that official criterion. Do not promote subitems into new EX numbers merely because extraction lost indentation.
+
+When correcting historical outputs, create a local old-to-new rule-ID mapping and rerun the report, ledger, and QC checks. Keep study-specific mappings in the local project context rather than in a public reusable skill package.
+
 ## Rule Display
 
 Each rule should show:
@@ -139,6 +147,7 @@ Laboratory and pregnancy/lactation evidence needs additional safeguards:
 - short Latin lab terms such as `AST` and `ALT` must match as lab tokens, not inside unrelated words such as `Master`, URLs, or mail headers;
 - when OCR splits a lab row across lines, the report should reconstruct the analyte-result-unit-reference row instead of showing a bare marker such as `ALT`;
 - EDC rows that only say a test was not performed or not needed are not valid evidence for a laboratory exclusion rule;
+- for multi-component laboratory/infection criteria, evidence should cover every protocol-required component, such as ANC/neutrophil count, liver enzymes, bilirubin, creatinine, viral serology/NAT logic, HIV, and syphilis confirmatory logic when applicable; one normal component does not prove the whole criterion passes;
 - TP-Ab, anti-TP, and syphilis serology should not be treated as pregnancy/lactation evidence. Pregnancy rules should rely on HCG/pregnancy/lactation wording or sex applicability.
 
 For EDC evidence, the report should remove administrative listing fields before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. The visible EDC evidence should focus on clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
@@ -199,6 +208,7 @@ Before using a report operationally:
 - verify lab/infection rules do not show report headers, mail headers, bare lab markers, or no-result EDC rows;
 - verify pregnancy/lactation rules do not cite unrelated TP/syphilis/serum-antibody rows;
 - verify no non-exception rule displays as passed with no locatable evidence;
+- for projects with corrected official numbering, verify the HTML contains the expected subject-rule count, such as reviewed subjects x official rules;
 - confirm failed, insufficient, conflict, and verification-required rules are expanded by default;
 - confirm the left sidebar stays fixed or sticky when the report panel scrolls;
 - open the Excel ledger;
