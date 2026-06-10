@@ -82,6 +82,8 @@ Each subject page should show:
 
 The report should not display model names, raw audit logs, internal evidence IDs, machine enum values, or developer instructions.
 
+The clinical explanation should not contain operational wording such as "offline draft", "LLM review", "candidate evidence found", "expand by default", or source-routing notes. Those details belong in the Excel ledger or audit trail, not in the medical-monitoring report.
+
 ## Evidence Hierarchy
 
 Primary raw sources are preferred:
@@ -101,6 +103,8 @@ Secondary or processed sources need verification:
 - OCR output with critical quality concerns.
 
 If a rule passes only on secondary evidence, the report should say that it passes but requires verification.
+
+OCR/VL success is not the same as evidence success. If OCR/VL output contains repeated boilerplate, prompt-like text, model self-reference, a table header without values, or text that fails the current-rule semantic check, the Agent should treat it as suspect output. For high-quality source pages that should contain a critical fact, the Agent should retry with a more suitable OCR setting, use VLM or Agent visual transcription, or flag the page for visual QC before deciding that evidence is absent.
 
 An aggregate EDC eligibility judgment, such as an IE/IEYN field saying that all inclusion and no exclusion criteria are met, is not evidence for any individual rule. If this is the only source for a rule, that rule should be treated as evidence-insufficient, not as a pass.
 
@@ -149,6 +153,8 @@ Laboratory or infection exclusion rules should cite actual laboratory/virology r
 Laboratory and pregnancy/lactation evidence needs additional safeguards:
 
 - short Latin lab terms such as `AST` and `ALT` must match as lab tokens, not inside unrelated words such as `Master`, URLs, or mail headers;
+- ANC/neutrophil evidence must be an absolute neutrophil count or equivalent result row, not a neutrophil percentage row;
+- pulmonary-function evidence for an FEV1 exclusion must contain the FEV1 value or interpretable percent-predicted field. A report header or a table header containing `FEV1` is not enough;
 - when OCR splits a lab row across lines, the report should reconstruct the analyte-result-unit-reference row instead of showing a bare marker such as `ALT`;
 - medical-history wording such as elevated creatinine history, diagnosis date, or no treatment needed may provide context, but it must not replace the actual creatinine or other laboratory result row; dates must not be mistaken for lab reference ranges;
 - EDC rows that only say a test was not performed or not needed are not valid evidence for a laboratory exclusion rule;
@@ -212,10 +218,13 @@ Before using a report operationally:
 - verify that score criteria cite real score records rather than scoring reminders or diary instructions;
 - verify that lung-function criteria cite the FEV1 row with numeric or interpretable values rather than a whole report block;
 - verify lab/infection rules cite actual lab rows and do not show allergy interpretation legends;
+- verify ANC/neutrophil evidence is an absolute count, not only a percentage;
+- verify FEV1 evidence contains an interpretable value or percent-predicted result, not only a report/header row;
 - verify lab/infection rules do not show report headers, mail headers, bare lab markers, or no-result EDC rows;
 - verify lab/infection rules do not treat medical-history descriptions, diagnosis dates, or no-treatment wording as laboratory results;
 - verify pregnancy/lactation rules do not cite unrelated TP/syphilis/serum-antibody rows;
 - verify no non-exception rule displays as passed with no locatable evidence;
+- verify the HTML body does not contain operational or model wording such as `LLM`, `offline draft`, `candidate evidence found`, `expand by default`, raw evidence IDs, or debug labels;
 - for projects with corrected official numbering, verify the HTML contains the expected subject-rule count, such as reviewed subjects x official rules;
 - confirm failed, insufficient, conflict, and verification-required rules are expanded by default;
 - confirm the left sidebar stays fixed or sticky when the report panel scrolls;
