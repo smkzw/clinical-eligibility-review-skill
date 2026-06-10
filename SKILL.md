@@ -19,6 +19,7 @@ This skill assists clinical monitors. It does not replace investigator judgment,
 - Treat OCR/VL text as imperfect. The reviewer model may infer likely OCR typos from context, but critical values, dates, units, positive/negative status, diagnoses, medications, and eligibility facts require conservative handling and visual/source verification when unclear.
 - Prefer primary raw source evidence: signed source records, screening/baseline medical records, laboratory reports, examination reports, imaging reports, pulmonary function reports, and other original clinical records.
 - Treat EDC listings, email, messaging screenshots, and communication records as secondary or processed evidence. A passed rule supported only by those sources must be marked as requiring verification.
+- Never use aggregate EDC eligibility judgment fields, such as `IEYN` / "meets all inclusion criteria and no exclusion criteria", as rule-level evidence. If this is the only source for a rule, mark that rule evidence-insufficient in both the HTML report and Excel ledger.
 - Treat broad candidate evidence as only a retrieval hint. Before displaying or highlighting evidence, confirm that the source text contains the current criterion's required clinical fact. If it only contains adjacent-criterion wording, general disease context, visit instructions, scoring reminders, or procedural text, suppress it and use a relevant EDC/table fallback or mark the criterion insufficient.
 - Do not display internal evidence IDs, model names, debug logs, audit events, or machine enum keys in reviewer-facing HTML.
 - Export operational logs and audit trails to Excel/structured ledger outputs. The HTML report is a focused clinical review artifact, not a log viewer.
@@ -132,7 +133,10 @@ Visual emphasis should follow clinical priority:
 - Evidence text must be original source text, not rewritten.
 - Highlight the exact sentence or phrase that supports or challenges the criterion.
 - Do not highlight an entire evidence block as a fallback. If the review quote contains ellipses, OCR line breaks, or normalized wording, locate and highlight the matching original source phrase.
+- Do not truncate a clinical fact because OCR inserted a single line wrap inside a sentence. Preserve complete facts such as history duration, drug names, surgery clauses, and biologic/monoclonal-antibody names.
 - Evidence relevance must be checked against the current criterion before display. For score thresholds, show actual score values, components, totals, dates, or visits, not diary instructions or scoring reminders. For diagnosis/history criteria, show the diagnosis/history and required supporting test facts, not generic disease wording. For treatment-response criteria, show treatment exposure and response/ineffectiveness or conflict text, not unrelated history. For time-window exclusion criteria, show the complete clause for that window and do not borrow text from an adjacent criterion.
+- Multi-component criteria require visible evidence for each required component. For allergic-rhinitis diagnosis/history rules, display both disease diagnosis/history duration and the supporting positive allergen/sIgE result. Do not treat allergen interpretation legends or concentration-grade tables as result evidence.
+- Laboratory/infection exclusion rules must cite actual lab or virology rows, not adjacent allergy-report interpretation legends.
 - The visible decision basis must match the visible evidence list. If the report hides redundant EDC because primary raw evidence is available, do not leave wording that says the conclusion relies on EDC.
 - For EDC evidence, remove listing metadata before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. Keep non-empty clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 - If primary raw evidence and EDC support the same fact consistently, show primary raw evidence in HTML and omit redundant EDC evidence.
@@ -168,6 +172,8 @@ At minimum, the Excel ledger should include:
 
 The ledger should retain operational metadata that is inappropriate for the HTML report, including model route, OCR model, privacy mode, run triggers, and rerun events.
 
+The ledger and HTML report must share the same effective verdict logic. If a rule is downgraded because only an aggregate IE/IEYN field is present, the subject summary, rule detail, and supplement-needed list must all show evidence-insufficient rather than a pass.
+
 ## QC Checklist
 
 Before declaring a run complete:
@@ -182,6 +188,9 @@ Before declaring a run complete:
 - Key evidence phrases are precisely highlighted without whole-block fallback.
 - Displayed evidence is relevant to the current criterion, not merely a broad candidate match.
 - Score criteria do not cite scoring reminders or diary instructions as proof of threshold compliance.
+- Aggregate EDC eligibility fields such as IE/IEYN are absent from visible evidence and cannot support rule-level passes.
+- Multi-component criteria visibly cover all required components, and allergen interpretation legends are not shown as allergen-result evidence.
+- Lab/infection rules cite actual lab/infection rows and do not show allergy interpretation legends.
 - EDC evidence omits administrative listing metadata.
 - The left sidebar remains fixed or sticky while the report panel scrolls.
 - Secondary-only passes are marked verification required at rule and subject level.

@@ -102,6 +102,8 @@ Secondary or processed sources need verification:
 
 If a rule passes only on secondary evidence, the report should say that it passes but requires verification.
 
+An aggregate EDC eligibility judgment, such as an IE/IEYN field saying that all inclusion and no exclusion criteria are met, is not evidence for any individual rule. If this is the only source for a rule, that rule should be treated as evidence-insufficient, not as a pass.
+
 ## Rule Display
 
 Each rule should show:
@@ -125,6 +127,10 @@ Candidate evidence is not automatically display evidence. Before a quote is show
 - time-window exclusion criteria should cite the complete clause for that window and should not borrow text from an adjacent criterion.
 
 If the raw medical record does not contain the required field for the current criterion, the Agent should actively inspect the corresponding EDC table or mark the criterion insufficient. It should not highlight unrelated raw text just because it was retrieved as a candidate.
+
+Multi-component criteria need evidence for each component. For example, an allergic-rhinitis diagnosis/history rule should show the source text for the diagnosis and history duration, plus the individual positive allergen/sIgE result row. A concentration-grade interpretation table such as "class 6 severe allergy" is not a substitute for the actual allergen result.
+
+Laboratory or infection exclusion rules should cite actual laboratory/virology rows, not an adjacent allergy interpretation legend. OCR line breaks inside a sentence should not cause the report to truncate drug names, history duration, biologic names, or surgery clauses.
 
 For EDC evidence, the report should remove administrative listing fields before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. The visible EDC evidence should focus on clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 
@@ -174,8 +180,11 @@ Before using a report operationally:
 - confirm subject identifiers and source-folder mapping;
 - check OCR quality flags for critical facts;
 - verify secondary-only passes;
+- verify that aggregate IE/IEYN eligibility fields are not used as rule-level evidence;
 - verify that highlighted evidence actually supports the current criterion, not just a broad candidate match;
+- verify multi-component rules show all required components, not only one part of the criterion;
 - verify that score criteria cite real score records rather than scoring reminders or diary instructions;
+- verify lab/infection rules cite actual lab rows and do not show allergy interpretation legends;
 - confirm failed, insufficient, conflict, and verification-required rules are expanded by default;
 - confirm the left sidebar stays fixed or sticky when the report panel scrolls;
 - open the Excel ledger;
