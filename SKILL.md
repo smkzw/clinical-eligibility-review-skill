@@ -19,6 +19,7 @@ This skill assists clinical monitors. It does not replace investigator judgment,
 - Treat OCR/VL text as imperfect. The reviewer model may infer likely OCR typos from context, but critical values, dates, units, positive/negative status, diagnoses, medications, and eligibility facts require conservative handling and visual/source verification when unclear.
 - Prefer primary raw source evidence: signed source records, screening/baseline medical records, laboratory reports, examination reports, imaging reports, pulmonary function reports, and other original clinical records.
 - Treat EDC listings, email, messaging screenshots, and communication records as secondary or processed evidence. A passed rule supported only by those sources must be marked as requiring verification.
+- Treat broad candidate evidence as only a retrieval hint. Before displaying or highlighting evidence, confirm that the source text contains the current criterion's required clinical fact. If it only contains adjacent-criterion wording, general disease context, visit instructions, scoring reminders, or procedural text, suppress it and use a relevant EDC/table fallback or mark the criterion insufficient.
 - Do not display internal evidence IDs, model names, debug logs, audit events, or machine enum keys in reviewer-facing HTML.
 - Export operational logs and audit trails to Excel/structured ledger outputs. The HTML report is a focused clinical review artifact, not a log viewer.
 - Use natural clinical language. Translate internal fields and flags before they appear in reports.
@@ -100,7 +101,7 @@ Do not include a separate rule overview section if it duplicates the rule cards.
 - Use multi-select status filters.
 - Sort center options by center code.
 - Sort subject options and default subject list by screening number.
-- Use serious card-like status styling for the subject switcher: dark sidebar, light subject cards, a left status stripe, and restrained clinical colors.
+- Use serious card-like status styling for the subject switcher: a fixed or sticky sidebar, light subject cards, a left status stripe, restrained clinical colors, and a project/brand accent only for focus or status cues. The sidebar should remain in place while the subject report scrolls independently.
 - Recommended status labels:
   - not eligible;
   - evidence insufficient;
@@ -131,6 +132,7 @@ Visual emphasis should follow clinical priority:
 - Evidence text must be original source text, not rewritten.
 - Highlight the exact sentence or phrase that supports or challenges the criterion.
 - Do not highlight an entire evidence block as a fallback. If the review quote contains ellipses, OCR line breaks, or normalized wording, locate and highlight the matching original source phrase.
+- Evidence relevance must be checked against the current criterion before display. For score thresholds, show actual score values, components, totals, dates, or visits, not diary instructions or scoring reminders. For diagnosis/history criteria, show the diagnosis/history and required supporting test facts, not generic disease wording. For treatment-response criteria, show treatment exposure and response/ineffectiveness or conflict text, not unrelated history. For time-window exclusion criteria, show the complete clause for that window and do not borrow text from an adjacent criterion.
 - For EDC evidence, remove listing metadata before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. Keep non-empty clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 - If primary raw evidence and EDC support the same fact consistently, show primary raw evidence in HTML and omit redundant EDC evidence.
 - If a pass depends only on EDC, only on email/communication records, or only on EDC plus email/communication records, mark it as verification required.
@@ -177,7 +179,10 @@ Before declaring a run complete:
 - No visible internal IDs, machine enums, model names, or debug logs appear in HTML.
 - Evidence labels use filename/page or EDC sheet/table labels.
 - Key evidence phrases are precisely highlighted without whole-block fallback.
+- Displayed evidence is relevant to the current criterion, not merely a broad candidate match.
+- Score criteria do not cite scoring reminders or diary instructions as proof of threshold compliance.
 - EDC evidence omits administrative listing metadata.
+- The left sidebar remains fixed or sticky while the report panel scrolls.
 - Secondary-only passes are marked verification required at rule and subject level.
 - Failed, insufficient, conflicting, and verification-required rules are expanded by default.
 - Passed rules with primary evidence are collapsed by default.

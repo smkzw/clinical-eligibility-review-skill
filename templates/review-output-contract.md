@@ -40,6 +40,10 @@ Do not rewrite original evidence quotes. Interpretations belong in the decision 
 
 Highlighting must be precise. Use the smallest original source phrase that supports or challenges the rule. If a quote contains ellipses, OCR line breaks, or normalized wording, map it back to the original source phrase. Do not highlight a whole paragraph or evidence block as a fallback.
 
+Candidate evidence is only a retrieval hint. Before an evidence reference is accepted for report display, confirm that it contains the current rule's required clinical fact. Do not use adjacent-rule text, general disease context, visit instructions, scoring reminders, or procedure descriptions as proof for a criterion.
+
+For score-threshold criteria, accepted evidence should include actual score values, component scores, totals, dates, or visit labels. If raw notes lack these fields, inspect the relevant EDC score table or return insufficient evidence.
+
 For EDC evidence, remove administrative listing fields before report display. Keep clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 
 ## Source Consistency
@@ -78,6 +82,7 @@ If any rule is `pass` but verification-required because it relies only on second
 - Show priority warnings before rule cards.
 - Collapse ordinary passes.
 - Expand failed, insufficient, conflicting, investigator-review, and verification-required rules.
+- Keep the left navigation fixed or sticky while the subject report panel scrolls.
 - Hide operational logs, model names, internal IDs, and debug information.
 
 ## Excel Ledger Rules

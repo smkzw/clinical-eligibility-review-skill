@@ -117,9 +117,18 @@ Evidence text should keep the original source wording. The most relevant phrase 
 
 Highlighting should be precise. If a quote contains ellipses, OCR line breaks, or normalized wording, the report should highlight the matching original source phrase. It should not mark an entire evidence block just because exact matching failed.
 
+Candidate evidence is not automatically display evidence. Before a quote is shown, the report should confirm that the source text actually supports the current criterion's clinical fact. For example:
+
+- score-threshold criteria should cite actual scores, components, totals, dates, or visits, not scoring reminders or diary instructions;
+- diagnosis/history criteria should cite the diagnosis, history duration, and required supporting tests, not generic disease wording;
+- treatment-response criteria should cite prior treatment exposure and response/ineffectiveness or conflict text, not unrelated history;
+- time-window exclusion criteria should cite the complete clause for that window and should not borrow text from an adjacent criterion.
+
+If the raw medical record does not contain the required field for the current criterion, the Agent should actively inspect the corresponding EDC table or mark the criterion insufficient. It should not highlight unrelated raw text just because it was retrieved as a candidate.
+
 For EDC evidence, the report should remove administrative listing fields before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. The visible EDC evidence should focus on clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 
-The subject switcher should use serious card-like status styling: a dark sidebar, light subject cards, a left status stripe, and restrained clinical colors.
+The subject switcher should use serious card-like status styling: a fixed or sticky sidebar, light subject cards, a left status stripe, restrained clinical colors, and a project/brand accent only for small focus or status cues. The sidebar should remain in place while the subject report scrolls.
 
 ## Excel Ledger
 
@@ -165,7 +174,10 @@ Before using a report operationally:
 - confirm subject identifiers and source-folder mapping;
 - check OCR quality flags for critical facts;
 - verify secondary-only passes;
+- verify that highlighted evidence actually supports the current criterion, not just a broad candidate match;
+- verify that score criteria cite real score records rather than scoring reminders or diary instructions;
 - confirm failed, insufficient, conflict, and verification-required rules are expanded by default;
+- confirm the left sidebar stays fixed or sticky when the report panel scrolls;
 - open the Excel ledger;
 - perform human medical-monitoring review.
 
