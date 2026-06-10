@@ -104,6 +104,8 @@ If a rule passes only on secondary evidence, the report should say that it passe
 
 An aggregate EDC eligibility judgment, such as an IE/IEYN field saying that all inclusion and no exclusion criteria are met, is not evidence for any individual rule. If this is the only source for a rule, that rule should be treated as evidence-insufficient, not as a pass.
 
+Except for explicitly configured "not triggered by absence" exclusion rules, a rule should not appear as a normal pass when no displayable, locatable, current-rule-relevant evidence exists. For example, an investigator-suitability exclusion can default to not triggered when no wording says the subject is unsuitable or should not be enrolled. It should not display randomization, score, laboratory, or aggregate EDC eligibility text as evidence for that rule.
+
 ## Rule Display
 
 Each rule should show:
@@ -132,6 +134,13 @@ Multi-component criteria need evidence for each component. For example, an aller
 
 Laboratory or infection exclusion rules should cite actual laboratory/virology rows, not an adjacent allergy interpretation legend. OCR line breaks inside a sentence should not cause the report to truncate drug names, history duration, biologic names, or surgery clauses.
 
+Laboratory and pregnancy/lactation evidence needs additional safeguards:
+
+- short Latin lab terms such as `AST` and `ALT` must match as lab tokens, not inside unrelated words such as `Master`, URLs, or mail headers;
+- when OCR splits a lab row across lines, the report should reconstruct the analyte-result-unit-reference row instead of showing a bare marker such as `ALT`;
+- EDC rows that only say a test was not performed or not needed are not valid evidence for a laboratory exclusion rule;
+- TP-Ab, anti-TP, and syphilis serology should not be treated as pregnancy/lactation evidence. Pregnancy rules should rely on HCG/pregnancy/lactation wording or sex applicability.
+
 For EDC evidence, the report should remove administrative listing fields before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. The visible EDC evidence should focus on clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 
 The subject switcher should use serious card-like status styling: a fixed or sticky sidebar, light subject cards, a left status stripe, restrained clinical colors, and a project/brand accent only for small focus or status cues. The sidebar should remain in place while the subject report scrolls.
@@ -145,6 +154,8 @@ The Excel ledger should contain operational details that do not belong in the HT
 - run/audit log;
 - manual tracker comparison;
 - supplement-needed list.
+
+If the HTML report combines multiple centers, create a combined Excel ledger next to it. It should use the same sheet structure and the same effective verdict logic as the single-center ledger.
 
 ## Installation
 
@@ -185,6 +196,9 @@ Before using a report operationally:
 - verify multi-component rules show all required components, not only one part of the criterion;
 - verify that score criteria cite real score records rather than scoring reminders or diary instructions;
 - verify lab/infection rules cite actual lab rows and do not show allergy interpretation legends;
+- verify lab/infection rules do not show report headers, mail headers, bare lab markers, or no-result EDC rows;
+- verify pregnancy/lactation rules do not cite unrelated TP/syphilis/serum-antibody rows;
+- verify no non-exception rule displays as passed with no locatable evidence;
 - confirm failed, insufficient, conflict, and verification-required rules are expanded by default;
 - confirm the left sidebar stays fixed or sticky when the report panel scrolls;
 - open the Excel ledger;

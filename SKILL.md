@@ -20,6 +20,7 @@ This skill assists clinical monitors. It does not replace investigator judgment,
 - Prefer primary raw source evidence: signed source records, screening/baseline medical records, laboratory reports, examination reports, imaging reports, pulmonary function reports, and other original clinical records.
 - Treat EDC listings, email, messaging screenshots, and communication records as secondary or processed evidence. A passed rule supported only by those sources must be marked as requiring verification.
 - Never use aggregate EDC eligibility judgment fields, such as `IEYN` / "meets all inclusion criteria and no exclusion criteria", as rule-level evidence. If this is the only source for a rule, mark that rule evidence-insufficient in both the HTML report and Excel ledger.
+- A rule must not render as a normal pass when no displayable, current-criterion-relevant evidence exists. The only exception is an explicitly configured presence-only exclusion rule, such as investigator suitability, that defaults to not triggered when no unsuitable wording exists.
 - Treat broad candidate evidence as only a retrieval hint. Before displaying or highlighting evidence, confirm that the source text contains the current criterion's required clinical fact. If it only contains adjacent-criterion wording, general disease context, visit instructions, scoring reminders, or procedural text, suppress it and use a relevant EDC/table fallback or mark the criterion insufficient.
 - Do not display internal evidence IDs, model names, debug logs, audit events, or machine enum keys in reviewer-facing HTML.
 - Export operational logs and audit trails to Excel/structured ledger outputs. The HTML report is a focused clinical review artifact, not a log viewer.
@@ -137,6 +138,10 @@ Visual emphasis should follow clinical priority:
 - Evidence relevance must be checked against the current criterion before display. For score thresholds, show actual score values, components, totals, dates, or visits, not diary instructions or scoring reminders. For diagnosis/history criteria, show the diagnosis/history and required supporting test facts, not generic disease wording. For treatment-response criteria, show treatment exposure and response/ineffectiveness or conflict text, not unrelated history. For time-window exclusion criteria, show the complete clause for that window and do not borrow text from an adjacent criterion.
 - Multi-component criteria require visible evidence for each required component. For allergic-rhinitis diagnosis/history rules, display both disease diagnosis/history duration and the supporting positive allergen/sIgE result. Do not treat allergen interpretation legends or concentration-grade tables as result evidence.
 - Laboratory/infection exclusion rules must cite actual lab or virology rows, not adjacent allergy-report interpretation legends.
+- Laboratory/infection rules must use precise lab-term matching. Short Latin terms such as `AST` and `ALT` must not match inside unrelated words such as `Master`, URLs, or mail headers. If OCR splits a lab row across lines, reconstruct the analyte-result-unit-reference row and do not display a bare marker such as `ALT`.
+- EX-14-like lab/infection rules must not use EDC rows that only say a test was not performed or not needed. EDC evidence must contain a concrete relevant indicator plus result/value/unit/positive-negative/clinical-significance context.
+- Pregnancy/lactation rules must require pregnancy, lactation, HCG, or sex-applicability wording. Generic serum antibody rows such as anti-TP/TP-Ab or syphilis serology are not pregnancy evidence.
+- Investigator-suitability exclusion rules may default to pass without evidence only when no explicit unsuitable wording is found. If evidence is displayed for that rule, it must contain explicit wording such as not suitable, not recommended to enroll, or unable to participate.
 - The visible decision basis must match the visible evidence list. If the report hides redundant EDC because primary raw evidence is available, do not leave wording that says the conclusion relies on EDC.
 - For EDC evidence, remove listing metadata before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. Keep non-empty clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 - If primary raw evidence and EDC support the same fact consistently, show primary raw evidence in HTML and omit redundant EDC evidence.
@@ -174,6 +179,8 @@ The ledger should retain operational metadata that is inappropriate for the HTML
 
 The ledger and HTML report must share the same effective verdict logic. If a rule is downgraded because only an aggregate IE/IEYN field is present, the subject summary, rule detail, and supplement-needed list must all show evidence-insufficient rather than a pass.
 
+For combined multi-center reports, generate a combined Excel ledger next to the combined HTML. It should use the same required sheets and the same effective verdict logic as single-center ledgers.
+
 ## QC Checklist
 
 Before declaring a run complete:
@@ -190,7 +197,9 @@ Before declaring a run complete:
 - Score criteria do not cite scoring reminders or diary instructions as proof of threshold compliance.
 - Aggregate EDC eligibility fields such as IE/IEYN are absent from visible evidence and cannot support rule-level passes.
 - Multi-component criteria visibly cover all required components, and allergen interpretation legends are not shown as allergen-result evidence.
-- Lab/infection rules cite actual lab/infection rows and do not show allergy interpretation legends.
+- Lab/infection rules cite actual lab/infection rows and do not show allergy interpretation legends, report headers, mail headers, bare lab markers, or no-result EDC rows.
+- Pregnancy/lactation rules do not cite unrelated TP/syphilis/serum-antibody rows.
+- No non-exception rule displays pass with `no locatable evidence`; investigator-suitability exclusion defaults are explicit and do not show unrelated evidence.
 - EDC evidence omits administrative listing metadata.
 - The left sidebar remains fixed or sticky while the report panel scrolls.
 - Secondary-only passes are marked verification required at rule and subject level.
