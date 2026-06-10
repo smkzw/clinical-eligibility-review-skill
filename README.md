@@ -146,6 +146,7 @@ Laboratory and pregnancy/lactation evidence needs additional safeguards:
 
 - short Latin lab terms such as `AST` and `ALT` must match as lab tokens, not inside unrelated words such as `Master`, URLs, or mail headers;
 - when OCR splits a lab row across lines, the report should reconstruct the analyte-result-unit-reference row instead of showing a bare marker such as `ALT`;
+- medical-history wording such as elevated creatinine history, diagnosis date, or no treatment needed may provide context, but it must not replace the actual creatinine or other laboratory result row; dates must not be mistaken for lab reference ranges;
 - EDC rows that only say a test was not performed or not needed are not valid evidence for a laboratory exclusion rule;
 - for multi-component laboratory/infection criteria, evidence should cover every protocol-required component, such as ANC/neutrophil count, liver enzymes, bilirubin, creatinine, viral serology/NAT logic, HIV, and syphilis confirmatory logic when applicable; one normal component does not prove the whole criterion passes;
 - TP-Ab, anti-TP, and syphilis serology should not be treated as pregnancy/lactation evidence. Pregnancy rules should rely on HCG/pregnancy/lactation wording or sex applicability.
@@ -206,6 +207,7 @@ Before using a report operationally:
 - verify that score criteria cite real score records rather than scoring reminders or diary instructions;
 - verify lab/infection rules cite actual lab rows and do not show allergy interpretation legends;
 - verify lab/infection rules do not show report headers, mail headers, bare lab markers, or no-result EDC rows;
+- verify lab/infection rules do not treat medical-history descriptions, diagnosis dates, or no-treatment wording as laboratory results;
 - verify pregnancy/lactation rules do not cite unrelated TP/syphilis/serum-antibody rows;
 - verify no non-exception rule displays as passed with no locatable evidence;
 - for projects with corrected official numbering, verify the HTML contains the expected subject-rule count, such as reviewed subjects x official rules;
