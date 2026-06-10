@@ -129,6 +129,10 @@ Evidence text should keep the original source wording. The most relevant phrase 
 
 Highlighting should be precise. If a quote contains ellipses, OCR line breaks, or normalized wording, the report should highlight the matching original source phrase. It should not mark an entire evidence block just because exact matching failed.
 
+When a model cites a broad raw-document paragraph, the report should re-slice that citation to the current rule's clinical fact before rendering it. Keep the model quote only when it is already short, locatable, and clinically focused. For score criteria, start at the actual score clause and end at the total-score phrase. For lung-function criteria, cite the FEV1 row or reconstructed FEV1 row, not the whole pulmonary-function report.
+
+The review explanation should be clinical reasoning, not a display instruction. Source caveats such as EDC-only or email-only should appear in badges, priority warnings, or the Excel source-consistency field. Phrases such as "EDC-only evidence" or "expand by default" should not appear inside the medical reasoning sentence.
+
 Candidate evidence is not automatically display evidence. Before a quote is shown, the report should confirm that the source text actually supports the current criterion's clinical fact. For example:
 
 - score-threshold criteria should cite actual scores, components, totals, dates, or visits, not scoring reminders or diary instructions;
@@ -203,8 +207,10 @@ Before using a report operationally:
 - verify secondary-only passes;
 - verify that aggregate IE/IEYN eligibility fields are not used as rule-level evidence;
 - verify that highlighted evidence actually supports the current criterion, not just a broad candidate match;
+- verify that the decision basis does not contain source-routing or report-operation phrases such as EDC-only evidence or expand-by-default instructions;
 - verify multi-component rules show all required components, not only one part of the criterion;
 - verify that score criteria cite real score records rather than scoring reminders or diary instructions;
+- verify that lung-function criteria cite the FEV1 row with numeric or interpretable values rather than a whole report block;
 - verify lab/infection rules cite actual lab rows and do not show allergy interpretation legends;
 - verify lab/infection rules do not show report headers, mail headers, bare lab markers, or no-result EDC rows;
 - verify lab/infection rules do not treat medical-history descriptions, diagnosis dates, or no-treatment wording as laboratory results;
