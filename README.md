@@ -115,6 +115,12 @@ Each rule should show:
 
 Evidence text should keep the original source wording. The most relevant phrase should be highlighted so a reviewer can quickly see why the source was cited.
 
+Highlighting should be precise. If a quote contains ellipses, OCR line breaks, or normalized wording, the report should highlight the matching original source phrase. It should not mark an entire evidence block just because exact matching failed.
+
+For EDC evidence, the report should remove administrative listing fields before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. The visible EDC evidence should focus on clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
+
+The subject switcher should use serious card-like status styling: a dark sidebar, light subject cards, a left status stripe, and restrained clinical colors.
+
 ## Excel Ledger
 
 The Excel ledger should contain operational details that do not belong in the HTML report:

@@ -100,6 +100,7 @@ Do not include a separate rule overview section if it duplicates the rule cards.
 - Use multi-select status filters.
 - Sort center options by center code.
 - Sort subject options and default subject list by screening number.
+- Use serious card-like status styling for the subject switcher: dark sidebar, light subject cards, a left status stripe, and restrained clinical colors.
 - Recommended status labels:
   - not eligible;
   - evidence insufficient;
@@ -129,6 +130,8 @@ Visual emphasis should follow clinical priority:
 - EDC displays at table/sheet level, for example `EDC Listing: LB_CHEM`.
 - Evidence text must be original source text, not rewritten.
 - Highlight the exact sentence or phrase that supports or challenges the criterion.
+- Do not highlight an entire evidence block as a fallback. If the review quote contains ellipses, OCR line breaks, or normalized wording, locate and highlight the matching original source phrase.
+- For EDC evidence, remove listing metadata before display, such as project code, form code, subject ID, initials, site code/name, row number, and last modified time. Keep non-empty clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
 - If primary raw evidence and EDC support the same fact consistently, show primary raw evidence in HTML and omit redundant EDC evidence.
 - If a pass depends only on EDC, only on email/communication records, or only on EDC plus email/communication records, mark it as verification required.
 
@@ -173,7 +176,8 @@ Before declaring a run complete:
 - OCR/VL quality flags are reviewed for critical facts.
 - No visible internal IDs, machine enums, model names, or debug logs appear in HTML.
 - Evidence labels use filename/page or EDC sheet/table labels.
-- Key evidence phrases are highlighted.
+- Key evidence phrases are precisely highlighted without whole-block fallback.
+- EDC evidence omits administrative listing metadata.
 - Secondary-only passes are marked verification required at rule and subject level.
 - Failed, insufficient, conflicting, and verification-required rules are expanded by default.
 - Passed rules with primary evidence are collapsed by default.

@@ -38,6 +38,10 @@ Each evidence reference should include:
 
 Do not rewrite original evidence quotes. Interpretations belong in the decision basis.
 
+Highlighting must be precise. Use the smallest original source phrase that supports or challenges the rule. If a quote contains ellipses, OCR line breaks, or normalized wording, map it back to the original source phrase. Do not highlight a whole paragraph or evidence block as a fallback.
+
+For EDC evidence, remove administrative listing fields before report display. Keep clinical fields such as result, medication, reason, date, assessment, and relevant yes/no values.
+
 ## Source Consistency
 
 Recommended source-consistency categories:
