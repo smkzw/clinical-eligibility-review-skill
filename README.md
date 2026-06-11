@@ -106,6 +106,8 @@ If a rule passes only on secondary evidence, the report should say that it passe
 
 OCR/VL success is not the same as evidence success. If OCR/VL output contains repeated boilerplate, prompt-like text, model self-reference, a table header without values, or text that fails the current-rule semantic check, the Agent should treat it as suspect output. For high-quality source pages that should contain a critical fact, the Agent should retry with a more suitable OCR setting, use VLM or Agent visual transcription, or flag the page for visual QC before deciding that evidence is absent.
 
+When VLM, Agent visual review, or human visual QC recovers a rule-critical fact that OCR missed, store that recovery as structured derived evidence, for example `subjects/<SUBJECT>/evidence/visual_evidence_items.jsonl`. The recovered evidence should flow through the normal evidence bundle, report, Excel ledger, and QC checks. Do not patch the final HTML directly. If the visual evidence is partial, obscured, or uncertain, mark it as requiring source verification so the report keeps the verification warning.
+
 An aggregate EDC eligibility judgment, such as an IE/IEYN field saying that all inclusion and no exclusion criteria are met, is not evidence for any individual rule. If this is the only source for a rule, that rule should be treated as evidence-insufficient, not as a pass.
 
 Except for explicitly configured "not triggered by absence" exclusion rules, a rule should not appear as a normal pass when no displayable, locatable, current-rule-relevant evidence exists. For example, an investigator-suitability exclusion can default to not triggered when no wording says the subject is unsuitable or should not be enrolled. It should not display randomization, score, laboratory, or aggregate EDC eligibility text as evidence for that rule.
@@ -177,6 +179,21 @@ The Excel ledger should contain operational details that do not belong in the HT
 
 If the HTML report combines multiple centers, create a combined Excel ledger next to it. It should use the same sheet structure and the same effective verdict logic as the single-center ledger.
 
+## Executable QC Gate
+
+For large batches, do not rely on spot checks alone. Run a project-level QC command after rebuilding the HTML and Excel outputs. A typical command looks like:
+
+```bash
+python -m eligibility_review.cli qc-report \
+  --project PROJECT_A \
+  --project PROJECT_B \
+  --expected-center CENTER_CODE \
+  --expected-subject-count REVIEWED_SUBJECT_COUNT \
+  --expected-rule-row-count SUBJECTS_X_OFFICIAL_RULES
+```
+
+The QC gate should fail when it detects issues such as missing centers or subjects, mismatched HTML/Excel rule counts, visible internal IDs, aggregate IE/IEYN evidence used for a single rule, a normal pass without displayable current-rule evidence, FEV1 pass evidence without an interpretable FEV1 value or verification fallback, or package-rule evidence that borrows an adjacent subitem.
+
 ## Installation
 
 For Codex or another Agent system that supports local skills, place this repository or the `SKILL.md` file in the Agent's skills directory. For example:
@@ -220,12 +237,14 @@ Before using a report operationally:
 - verify lab/infection rules cite actual lab rows and do not show allergy interpretation legends;
 - verify ANC/neutrophil evidence is an absolute count, not only a percentage;
 - verify FEV1 evidence contains an interpretable value or percent-predicted result, not only a report/header row;
+- verify visual-transcription evidence is stored as structured evidence and is marked for source verification when partial or uncertain;
 - verify lab/infection rules do not show report headers, mail headers, bare lab markers, or no-result EDC rows;
 - verify lab/infection rules do not treat medical-history descriptions, diagnosis dates, or no-treatment wording as laboratory results;
 - verify pregnancy/lactation rules do not cite unrelated TP/syphilis/serum-antibody rows;
 - verify no non-exception rule displays as passed with no locatable evidence;
 - verify the HTML body does not contain operational or model wording such as `LLM`, `offline draft`, `candidate evidence found`, `expand by default`, raw evidence IDs, or debug labels;
 - for projects with corrected official numbering, verify the HTML contains the expected subject-rule count, such as reviewed subjects x official rules;
+- run the full-batch QC gate with expected center, subject, and rule-row counts;
 - confirm failed, insufficient, conflict, and verification-required rules are expanded by default;
 - confirm the left sidebar stays fixed or sticky when the report panel scrolls;
 - open the Excel ledger;
